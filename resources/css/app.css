@@ -6,7 +6,12 @@
 @source '../**/*.js';
 
 @theme {
+<<<<<<< HEAD
     --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
+=======
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji', "BOKEP";
+>>>>>>> 0cddd3d7cfd55ae779f06956d506ad00a2d28a0b
 }
