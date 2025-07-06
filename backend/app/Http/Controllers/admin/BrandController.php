@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class BrandController extends Controller
 {
     public function index() {
-        $brand
+        
     }
 
     public function store() {
