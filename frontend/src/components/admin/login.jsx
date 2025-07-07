@@ -2,7 +2,7 @@ import React from 'react'
 import Layout from '../common/Layout';
 import { useForm } from 'react-hook-form';
 import { apiUrl } from '../common/http';
-import { toast } from 'react-toastify';
+import { toast } from 'react-toastify'; 
 import { useNavigate } from 'react-router-dom';
 
 const login = () => {
@@ -29,7 +29,7 @@ const login = () => {
             console.log(result)
 
             if(result.status == 200) {
-                const adminInfo = { 
+                const adminInfo = {
                     token: result.token,
                     id: result.id,
                     name: result.name,
