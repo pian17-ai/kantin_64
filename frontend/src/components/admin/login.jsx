@@ -25,11 +25,11 @@ const login = () => {
             },
             body: JSON.stringify(data),
         }).then(res => res.json())
-        then(result => {
+        .then(result => {
             console.log(result)
 
             if(result.status == 200) {
-                const admin = {
+                const adminInfo = { 
                     token: result.token,
                     id: result.id,
                     name: result.name,
