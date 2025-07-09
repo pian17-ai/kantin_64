@@ -15,6 +15,9 @@ const Sidebar = () => {
                       <Link to="/admin/categories">Categories</Link>
                     </li>
                     <li>
+                      <Link to='/admin/brands'>Favorit</Link>
+                    </li>
+                    <li>
                       <a href="">Produk Kami</a>
                     </li>
                     <li>
