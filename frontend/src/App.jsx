@@ -8,6 +8,8 @@ import Checkout from './components/Checkout'
 import Login from './components/admin/login'
 import { ToastContainer, toast } from 'react-toastify';
 import Dashboard from './components/admin/Dashboard'
+import { AdminRequiredAuth } from './components/admin/AdminRequireAuth'
+import { default as ShowCategories } from './components/admin/category/Show'
 
 function App() {
 
@@ -23,7 +25,16 @@ function App() {
           <Route path='/checkout' element={<Checkout/>}/>
 
           <Route path='/admin/login' element={<Login/>}/>
-          <Route path='/admin/dashboard' element={<Dashboard/>}/>
+          <Route path='/admin/dashboard' element={
+            <AdminRequiredAuth>
+              <Dashboard/>
+            </AdminRequiredAuth>
+          }/>
+          <Route path='/admin/categories' element={
+            <AdminRequiredAuth>
+              <ShowCategories/>
+            </AdminRequiredAuth>
+          }/>
         </Routes>
       </BrowserRouter>
       <ToastContainer/>
