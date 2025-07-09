@@ -4,6 +4,7 @@ import Sidebar from '../../common/Sidebar'
 import { Link } from 'react-router-dom'
 import { adminToken, apiUrl } from '../../common/http'
 import Loader from '../../common/Loader'
+import Nostate from '../../common/Nostate'
 const Show = () => {
     const [categories, setCategories] = useState([]);
     const [loader, setLoader] = useState(false);
