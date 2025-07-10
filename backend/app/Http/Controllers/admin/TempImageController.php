@@ -16,7 +16,7 @@ class TempImageController extends Controller
     {
         // Validate the request
         $validator = Validator::make($request->all(), [
-            'image' => 'required|image|mimes:jpeg,jpg,png,gif|max:2048'
+            'image' => 'required|image|mimes:jpeg,jpg,png'
         ]);
 
         if ($validator->fails()) {
@@ -32,7 +32,7 @@ class TempImageController extends Controller
         $tempImage->save();
 
         $image = $request->file('image');
-        $imageName = time() . '.' . $request->image->extension();
+        $imageName = time() . '.' . $image->extension();
         $image->move(public_path('uploads/temp'), $imageName);
 
         $tempImage->name = $imageName;
@@ -40,9 +40,9 @@ class TempImageController extends Controller
 
         // save image thumbnail
         $manager = new ImageManager(Driver::class);
-        $img = $manager->read(public_path('upload/temp' . $imageName));
-        $img->coverDown(1200, 720);
-        $image->save(public_path('uploads/temp/thumb/'.$imageName));
+        $img = $manager->read(public_path('uploads/temp/'.$imageName));
+        $img->coverDown(400, 500);
+        $img->save(public_path('uploads/temp/thumb/'.$imageName));
 
 
         return response()->json([
