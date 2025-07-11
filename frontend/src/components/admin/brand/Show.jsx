@@ -5,6 +5,7 @@ import Sidebar from '../../common/Sidebar'
 import { adminToken, apiUrl } from '../../common/http'
 import Loader from '../../common/Loader'
 import Nostate from '../../common/Nostate'
+import { toast } from 'react-toastify'
 
 const Show = () => {
 
@@ -38,7 +39,7 @@ const Show = () => {
 
         if (confirm("Are you sure you want to delete?")) {
 
-            const res = await fetch(`${apiUrl}/categories/${id}`, {
+            const res = await fetch(`${apiUrl}/brands/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-type': 'application/json',
@@ -50,8 +51,8 @@ const Show = () => {
                 .then(result => {
                     if (result.status == 200) {
 
-                        const newCategories = categories.filter(category => category.id != id)
-                        setCategories(newCategories);
+                        const newBrands = brands.filter(brand => brand.id != id)
+                        setBrands(newBrands);
                         toast.success(result.message)
                     } else {
                         console.log("Sepertinya ada kesalahan")
@@ -102,7 +103,7 @@ const Show = () => {
                                             {
                                                 brands.map(brand => {
                                                     return (
-                                                        <tr>
+                                                        <tr key={`brand-${brand.id}`}>
                                                             <td>{brand.id}</td>
                                                             <td>{brand.name}</td>
                                                             <td>

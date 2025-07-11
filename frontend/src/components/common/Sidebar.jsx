@@ -15,16 +15,10 @@ const Sidebar = () => {
                       <Link to="/admin/categories">Categories</Link>
                     </li>
                     <li>
-                      <Link to='/admin/brands'>Favorit</Link>
+                      <Link to='/admin/brands'>Penjual</Link>
                     </li>
                     <li>
-                      <a href="">Produk Kami</a>
-                    </li>
-                    <li>
-                      <a href="">Makanan</a>
-                    </li>
-                    <li>
-                      <a href="">Minuman</a>
+                      <Link to="/admin/products">Menu Makanan</Link>
                     </li>
                     <li>
                       <a href="">Orders</a>
