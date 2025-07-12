@@ -16,8 +16,17 @@ class ProductController extends Controller
 
         //filter products by category
         if(!empty($request->category)){
-            
+            $catArray = explode(',',$request->category);
+            $products = $products->whereIn('category_id', $catArray);
         }
+
+        //filter products by brand
+        if(!empty($request->brand)) {
+            $brandArray = explode(',',$request->brand);
+            $products = $products->whereIn('brand_id', $brandArray);
+        }
+
+        $products = $products->get();
 
         return response()->json([
             'status' => 200,
@@ -67,6 +76,22 @@ class ProductController extends Controller
         return response()->json([
             'status' => 200,
             'data' => $brands
+        ], 200);
+    }
+
+    public function getProduct($id) {
+        $product = Product::with('product_images', 'product_sizes.size')->find($id); //.size njir kenapa
+
+        if($product == null) {
+            return response()->json([
+                'status' => 404,
+                'message' => "Product not found"
+            ], 404);
+        }
+        
+        return response()->json([
+            'status' => 200,
+            'data' => $product
         ], 200);
     }
 }
