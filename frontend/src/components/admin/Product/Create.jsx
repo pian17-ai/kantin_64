@@ -14,6 +14,8 @@ const Create = ({ placeholder }) => {
      const [disable, setDisable] = useState(false)
     const [categories, setCategories] = useState([])
     const [brands, setBrands] = useState([])
+    const [gallery, setGallery] = useState([])
+    const [galleryImages, setGalleryImages] = useState([])
     const navigate = useNavigate();
 
     const config = useMemo(() => ({
@@ -32,13 +34,13 @@ const Create = ({ placeholder }) => {
     } = useForm();
 
     const saveProduct = async (data) => {
-        const formData = {...data, "description": content }
+        const formData = {...data, "description": content, "gallery": gallery }
         setDisable(true);
-        const res = await fetch(`${apiUrl}/products`, {
+        const res = await fetch(`${apiUrl}/products`,{
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',
-                'Accept': 'apllication/json',
+                'Accept': 'application/json',
                 'Authorization': `Bearer ${adminToken()}`
             },
             body: JSON.stringify(formData)
@@ -82,6 +84,30 @@ const Create = ({ placeholder }) => {
         }).then(res => res.json())
             .then(result => {
                 setBrands(result.data)
+            })
+    }
+
+    const handleFile = async (e) => {
+        const formData = new FormData();
+        const file = e.target.files[0];
+        formData.append("image", file);
+        setDisable(true)
+
+        const res = await fetch(`${apiUrl}/temp-images`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'apllication/json',
+                'Authorization': `Bearer ${adminToken()}`
+            },
+            body: formData
+        }).then(res => res.json())
+            .then(result => {
+                gallery.push(result.data.id);
+                setGallery(gallery)
+
+                galleryImages.push(result.data.image_url)
+                setGalleryImages(galleryImages)
+                setDisable(false)
             })
     }
 
@@ -307,6 +333,23 @@ const Create = ({ placeholder }) => {
                                                         onChange={handleFile}
                                                         type="file" className='form-control' />
                                                     </div>
+
+                                                   <div className='mb-3'>
+                                                    <div className='row'>
+                                                        {
+                                                            galleryImages && galleryImages.map((image, index) => {
+                                                                return(
+                                                                    <div className='col-md-3' key={`image-${index}`}>
+                                                                        <div className='card shadow'>
+                                                                            <img src={image} alt="" className='w-100'/>
+                                                                        </div>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
+                                                    </div>
+                                                    </div> 
+
                                 </div>
                             </div>
                             <button
