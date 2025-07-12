@@ -27,10 +27,12 @@ const Create = ({ placeholder }) => {
         register,
         handleSubmit,
         watch,
+        setError,
         formState: { errors },
     } = useForm();
 
     const saveProduct = async (data) => {
+        const formData = {...data, "description": content }
         setDisable(true);
         const res = await fetch(`${apiUrl}/products`, {
             method: 'POST',
@@ -39,15 +41,18 @@ const Create = ({ placeholder }) => {
                 'Accept': 'apllication/json',
                 'Authorization': `Bearer ${adminToken()}`
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(formData)
         }).then(res => res.json())
             .then(result => {
                 setDisable(false);
                 if (result.status == 200) {
                     toast.success(result.message);
-                    navigate('/admin/categories')
+                    navigate('/admin/products')
                 } else {
-                    console.log("Sepertinya ada kesalahan")
+                    const formErrors = result.errors;
+                    Object.keys(formErrors).forEach((field) => {
+                        setError(field, { message: formErrors[field][0] });
+                    })
                 }
             })
     }
@@ -121,7 +126,14 @@ const Create = ({ placeholder }) => {
                                         <div className='col-md-6'>
                                            <div className='mb-3'>
                                                 <label className='form-label' htmlFor="">Category</label>
-                                                 <select className='form-control'>
+                                                 <select 
+                                                 {
+                                                    ...register('category', {
+                                                required: 'Please select a Category'
+                                            })
+                                            } 
+                                            className={`form-control ${errors.category && 'is-invalid'}`}
+                                            >
                                                 <option value="">Select a Category</option>
                                                     {
                                                     categories && categories.map((category) => {
@@ -131,12 +143,19 @@ const Create = ({ placeholder }) => {
                                                     })
                                                 }
                                             </select>
+                                             {
+                                            errors.category && <p className='invalid-feedback'>{errors.category?.message}</p>
+                                        }
                                            </div>
                                         </div>
                                         <div className='col-md-6'>
                                               <div className='mb-3'>
                                                 <label className='form-label' htmlFor="">Penjual</label>
-                                                 <select className='form-control'>
+                                                 <select 
+                                                 {
+                                                    ...register('brand')
+                                            } 
+                                                 className='form-control'>
                                                 <option value="">Select a Penjual</option>
                                                  {
                                                     brands && brands.map((brand) => {
@@ -154,7 +173,11 @@ const Create = ({ placeholder }) => {
                                         <label htmlFor="" className='form-label'>
                                             Short Description
                                         </label>
-                                        <textarea className='form-control' placeholder='Short Description' rows={3}></textarea>
+                                        <textarea 
+                                        {
+                                                    ...register('short_description')
+                                        } 
+                                         className='form-control' placeholder='Short Description' rows={3}></textarea>
                                     </div>
 
                                     <div className='mb-3'>
@@ -168,7 +191,73 @@ const Create = ({ placeholder }) => {
                                                 />
                                     </div>
 
-                                    <div className='mb-3'>
+                                    <h3 className="py-3 border-bottom mb-3">Pricing</h3>
+                                    <div className='row'>
+                                                <div className='col-md-6'>
+                                                    <div className='mb-3'>
+                                                        <label htmlFor="" className='form-label'>Price</label>
+                                                        <input
+                                                         {
+                                                    ...register('price', {
+                                                required: 'The price field is required'
+                                            })
+                                            } 
+                                            className={`form-control ${errors.price && 'is-invalid'}`}
+                                                        type="text" placeholder='Price'/>
+                                                         {
+                                            errors.price && <p className='invalid-feedback'>{errors.price?.message}</p>
+                                        }
+                                                    </div>
+                                                </div>
+                                                <div className='col-md-6'>
+                                                    <div className='mb-3'>
+                                                        <label htmlFor="" className='form-label'>Discounted Price</label>
+                                                        <input
+                                                        {
+                                                    ...register('compare_price')
+                                                        } 
+                                                        type="text" placeholder='Discounted Price' className='form-control' />
+                                                    </div>
+                                                </div>
+                                                <h3 className="py-3 border-bottom mb-3">inventory</h3>
+                                                <div className='col-md-6'>
+                                                    <div className='mb-3'>
+                                                        <label htmlFor="" className='form-label'>Sku</label>
+                                                        <input
+                                                         {
+                                                    ...register('sku', {
+                                                required: 'The sku field is required'
+                                            })
+                                            } 
+                                            className={`form-control ${errors.sku && 'is-invalid'}`}
+                                                        type="text" placeholder='Sku'/>
+                                                         {
+                                            errors.sku && <p className='invalid-feedback'>{errors.sku?.message}</p>
+                                        }
+                                                </div>
+                                                </div>
+                                                <div className='col-md-6'>
+                                                    <div className='mb-3'>
+                                                        <label htmlFor="" className='form-label'>Barcode</label>
+                                                        <input
+                                                        {
+                                                    ...register('barcode')
+                                            } 
+                                                        type="text" placeholder='Barcode' className='form-control' />
+                                                    </div>
+                                                </div>
+                                                <div className='col-md-6'>
+                                                    <div className='mb-3'>
+                                                        <label htmlFor="" className='form-label'>Qty</label>
+                                                        <input
+                                                        {
+                                                    ...register('qty')
+                                            } 
+                                                        type="text" placeholder='qty' className='form-control' />
+                                                    </div>
+                                                </div>
+                                                <div className='col-md-6'>
+                                                    <div className='mb-3'>
                                         <label htmlFor="" className='form-label'>
                                             Status
                                         </label>
@@ -187,12 +276,42 @@ const Create = ({ placeholder }) => {
 
                                             errors.status && <p className='invalid-feedback'>{errors.status?.message}</p>
                                         }
+                                              </div>
+                                         </div>
                                     </div>
+
+                                                    <div className='mb-3'>
+                                        <label htmlFor="" className='form-label'>
+                                            Featured
+                                        </label>
+                                        <select
+                                            {...register('is_featured', {
+                                                required: 'This field is required'
+                                            })
+                                            }   
+                                            className={`form-control ${errors.status && 'is-invalid'}`}
+                                        >
+                                            <option value="1">Yes</option>
+                                            <option value="0">No</option>
+                                        </select>
+                                        {
+
+                                            errors.status && <p className='invalid-feedback'>{errors.status?.message}</p>
+                                        }
+                                              </div>                                         
+
+                                    <h3 className="py-3 border-bottom mb-3">Galerry</h3>
+                                     <div className='mb-3'>
+                                                        <label htmlFor="" className='form-label'>Image</label>
+                                                        <input
+                                                        onChange={handleFile}
+                                                        type="file" className='form-control' />
+                                                    </div>
                                 </div>
                             </div>
                             <button
                                 disabled={disable}
-                                type='submit' className='btn btn-primary mt-3'>Create</button>
+                                type='submit' className='btn btn-primary mt-3 mb-5'>Create</button>
                         </form>
             </div>
           </div>
