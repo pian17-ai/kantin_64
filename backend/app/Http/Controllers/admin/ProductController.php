@@ -5,8 +5,10 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductSize;
 use App\Models\TempImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -17,7 +19,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::orderBy('created_at', 'DESC')
-            ->with('product_images')
+            ->with(['product_images', 'product_sizes'])
             ->get();
         return response()->json([
             'status' => 200,
@@ -61,6 +63,15 @@ class ProductController extends Controller
         $product->is_featured = $request->is_featured;
         $product->save();
 
+        if (!empty($request->sizes)) {
+            foreach ($request->sizes as $sizeId) {
+                $productSize = new ProductSize();
+                $productSize->size_id = $sizeId;
+                $productSize->product_id = $product->id;
+                $productSize->save();
+            }
+        }
+
         // save the product image
         if (!empty($request->gallery)) {
             foreach ($request->gallery as $key => $tempImageId) {
@@ -69,8 +80,9 @@ class ProductController extends Controller
                 // large thumbnail
                 $extArray = explode('.', $tempImage->name);
                 $ext = end($extArray);
+                $rand = rand(1000, 10000);
 
-                $imageName = $product->id . '-' . time() . '.' . $ext;
+                $imageName = $product->id . '-' . $rand . time() . '.' . $ext;
                 $manager = new ImageManager(Driver::class);
                 $img = $manager->read(public_path('uploads/temp/' . $tempImage->name));
                 $img->scaleDown(1200);
@@ -104,7 +116,7 @@ class ProductController extends Controller
     // This method will return a single product
     public function show($id)
     {
-        $product = Product::with('product_images')
+        $product = Product::with(['product_images', 'product_sizes'])
             ->find($id);
 
         if ($product == null) {
@@ -114,9 +126,12 @@ class ProductController extends Controller
             ], 404);
         }
 
+        $productSize = $product->product_sizes()->pluck('size_id');
+
         return response()->json([
             'status' => 200,
-            'data' => $product
+            'data' => $product,
+            'productSize' => $productSize
         ]);
     }
 
@@ -155,7 +170,7 @@ class ProductController extends Controller
         $product->compare_price = $request->compare_price;
         $product->category_id = $request->category;
         $product->brand_id = $request->brand;
-        $product->sku = $request->sku;
+        $product->sku = $request->sku;  
         $product->qty = $request->qty;
         $product->description = $request->description;
         $product->short_description = $request->short_description;
@@ -163,6 +178,16 @@ class ProductController extends Controller
         $product->status = $request->status;
         $product->is_featured = $request->is_featured;
         $product->save();
+
+        if (!empty($request->sizes)) {
+            ProductSize::where('product_id', $product->id)->delete();
+            foreach ($request->sizes as $sizeId) {
+                $productSize = new ProductSize;
+                $productSize->size_id = $sizeId;
+                $productSize->product_id = $product->id;
+                $productSize->save();
+            }
+        }
 
         return response()->json([
             'status' => 200,
@@ -173,7 +198,7 @@ class ProductController extends Controller
     // This method will destroy a single product
     public function destroy($id)
     {
-        $product = Product::find($id);
+        $product = Product::with('product_images')->find($id);
 
         if ($product == null) {
             return response()->json([
@@ -182,7 +207,14 @@ class ProductController extends Controller
             ], 404);
         }
 
-        $product->delete();
+        // $product->delete();
+
+        if($product->product_images()) {
+            foreach($product->product_images as $productImage) {
+                File::delete(public_path('uploads/products/large/'.$productImage->image));
+                File::delete(public_path('uploads/products/small'.$productImage->image));
+            }
+        }
 
         return response()->json([
             'status' => 200,
@@ -231,6 +263,40 @@ class ProductController extends Controller
             'status' => 200,
             'message' => 'Image has been uploaded successfully',
             'data' => $productImage
+        ], 200);
+    }
+
+    public function updateDefaultImage(Request $request)
+    {
+        $product = Product::find($request->product_id);
+        $product->image = $request->image;
+        $product->save();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'SATRIA KONTROL'
+        ], 200);
+    }
+
+    public function deleteProductImage($id)
+    {
+        $productImage = ProductImage::find($id);
+
+        if ($productImage == null) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Image not found'
+            ], 404);
+        }
+
+        File::delete(public_path('uploads/products/large/' . $productImage->image));
+        File::delete(public_path('uploads/product/small/' . $productImage->image));
+
+        $productImage->delete();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Product image deleted successfully'
         ], 200);
     }
 }
