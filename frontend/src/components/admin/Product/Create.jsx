@@ -34,7 +34,7 @@ const Create = ({ placeholder }) => {
     } = useForm();
 
     const saveProduct = async (data) => {
-        const formData = {...data, "description": content, "gallery": gallery }
+        const formData = {...data, "description": content, "gallery": gallery}
         setDisable(true);
         const res = await fetch(`${apiUrl}/products`,{
             method: 'POST',
@@ -96,7 +96,7 @@ const Create = ({ placeholder }) => {
         const res = await fetch(`${apiUrl}/temp-images`, {
             method: 'POST',
             headers: {
-                'Accept': 'apllication/json',
+                'Accept': 'application/json',
                 'Authorization': `Bearer ${adminToken()}`
             },
             body: formData
@@ -108,7 +108,13 @@ const Create = ({ placeholder }) => {
                 galleryImages.push(result.data.image_url)
                 setGalleryImages(galleryImages)
                 setDisable(false)
+                e.target.value = ""
             })
+    }
+
+    const deleteImage = (image) => {
+        const newGallery = galleryImages.filter(gallery => gallery != image)
+        setGalleryImages(newGallery)
     }
 
     useEffect (() => {
@@ -322,7 +328,8 @@ const Create = ({ placeholder }) => {
                                         </select>
                                         {
 
-                                            errors.status && <p className='invalid-feedback'>{errors.status?.message}</p>
+                                            errors.status && 
+                                            <p className='invalid-feedback'>{errors.status?.message}</p>
                                         }
                                               </div>                                         
 
@@ -338,10 +345,11 @@ const Create = ({ placeholder }) => {
                                                     <div className='row'>
                                                         {
                                                             galleryImages && galleryImages.map((image, index) => {
-                                                                return(
+                                                                return( 
                                                                     <div className='col-md-3' key={`image-${index}`}>
                                                                         <div className='card shadow'>
                                                                             <img src={image} alt="" className='w-100'/>
+                                                                            <button className='btn btn-danger' onClick={() => deleteImage(image)}>Delete</button>
                                                                         </div>
                                                                     </div>
                                                                 )

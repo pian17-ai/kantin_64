@@ -79,13 +79,15 @@ const Show = () => {
                                 <tr>
                                 <td>{product.id}</td>
                                 <td>
-                                    <img src={product.image_url} alt="" width={50}/>
+                                    {
+                                        (product.image_url == "") ? <img src="https://placehold.co/50%50>" /> :
+                                        <img src={product.image_url} alt="" width={50}/>
+                                    }
                                 </td>
                                 <td>{product.title}</td>
                                 <td>{product.price}</td>
                                 <td>{product.qty}</td>
                                 <td>{product.sku}</td>
-                                <td>{product.status}</td>
                                 <td>{
                                            product.status == 1 ?
                                            <span className='badge text-bg-success'>Active</span>:
