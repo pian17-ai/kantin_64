@@ -19,7 +19,7 @@ const Create = ({ placeholder }) => {
     const navigate = useNavigate();
 
     const config = useMemo(() => ({
-        readonly: false, // all options from http://xdsoft.net/jodit/docs/,
+        readonly: false, // all options from https://xdsoft.net/jodit/docs/,
         placeholder: placeholder || ''
     }),
     [placeholder]
@@ -64,7 +64,7 @@ const Create = ({ placeholder }) => {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
-                'Accept': 'apllication/json',
+                'Accept': 'application/json',
                 'Authorization': `Bearer ${adminToken()}`
             }
         }).then(res => res.json())
@@ -78,7 +78,7 @@ const Create = ({ placeholder }) => {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
-                'Accept': 'apllication/json',
+                'Accept': 'application/json',
                 'Authorization': `Bearer ${adminToken()}`
             }
         }).then(res => res.json())
