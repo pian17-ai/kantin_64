@@ -27,7 +27,9 @@ Route::get('login', [AccountController::class, 'authenticate']);
 
 // Route::get('get-order-details', function() {return "OK";});
 
-Route::group(['middleware' => ['auth:sanctum', 'checkUserRole']], function(){
+Route::group(['middleware' => ['auth:sanctum', 
+// 'checkUserRole'
+]], function(){
     Route::post('save-order', [OrderController::class, 'saveOrder']);
     Route::get('get-order-details/{id}', [AccountController::class, 'getOrderDetails']);
 });
@@ -37,7 +39,9 @@ Route::group(['middleware' => ['auth:sanctum', 'checkUserRole']], function(){
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::group(['middleware' => ['auth:sanctum', 'checkAdminRole']],function(){
+Route::group(['middleware' => ['auth:sanctum', 
+// 'checkAdminRole'
+]],function(){
     // Route::get('categories', [CategoryController::class,'index']);
     // Route::post('categories', [CategoryController::class,'store']);
     // Route::get('categories/{id}', [CategoryController::class, 'show']);

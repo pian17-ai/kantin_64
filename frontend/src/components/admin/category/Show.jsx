@@ -16,7 +16,7 @@ const Show = () => {
             method: 'GET',
             headers: {
                 'Content-type' : 'application/json',
-                'Accept' : 'apllication/json',
+                'Accept' : 'application/json',
                 'Authorization' : `Bearer ${adminToken()}`
             }
         }).then(res => res.json())
